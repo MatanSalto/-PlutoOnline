@@ -1,0 +1,71 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Online Compiler</title>
+    <link rel="stylesheet" href="{% static 'compiler/style.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300&family=Roboto+Mono:ital,wght@1,300&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@1,300&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="pageHeader">
+        <h1>Pluto Online Compiler</h1>
+        <img src="{% static 'compiler/Pluto-Planet-PNG-Pic.png' %}">
+    </div>
+  <div class="outerContainer">
+    <div class="container">
+      <div class="editor">
+          <div class="textarea-wrapper">
+              <textarea id="code" placeholder="Write your code here"></textarea>
+              <div id="highlighted"></div>
+          </div>
+        <button id="compile-btn">Run</button>
+      </div>
+      <div class="console">
+        <h3>Console</h3>
+        <div id="output">
+        </div>
+      </div>
+    </div>
+    <div class="console">
+      <h2>Assembly Code</h2>
+      <div id="asmoutput">
+      </div>
+    </div>
+  </div>
+  <script>
+    document.getElementById("compile-btn").addEventListener("click", function() {
+      
+      var codeInput = document.getElementById("code").value;
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function() {
+          if (this.readyState == 4 && this.status == 200) {
+              console.log(this.responseText)
+              var data = JSON.parse(this.response);
+              var outputContainer = document.getElementById("output");
+              var asmContainer = document.getElementById("asmoutput");
+              outputContainer.innerHTML = data.output.replace(/\n/g, "<br>")
+              asmContainer.innerHTML = data.asm.replace(/\n/g, "<br>")
+              console.log(data); 
+              
+          }
+      };
+      xhttp.open("POST", "{% url 'run_code' %}", true);
+      xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+      xhttp.send("code_input=" + encodeURIComponent(codeInput));
+    });
+  </script>
+  <script type="module" src="{% static 'compiler/app.js' %}"></script>
+</body>
+</html>
